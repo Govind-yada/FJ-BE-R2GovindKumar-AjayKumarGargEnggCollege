@@ -225,4 +225,5 @@ finflow/
 - [ ] Bank statement CSV/PDF import
 - [ ] Anomaly detection
 #   F i n F l o w  
+ #   F i n F l o w  
  
