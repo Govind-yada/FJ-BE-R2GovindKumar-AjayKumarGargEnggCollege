@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Finflow — Personal Finance Tracker"/>
+  <meta name="theme-color" content="#080c12"/>
+  <title>Finflow — Personal Finance Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/css/styles.css"/>
+</head>
+<body>
+
+<!-- ════════════ LOGIN ════════════ -->
+<section id="loginScreen" class="auth-screen" aria-label="Sign in">
+  <div class="auth-bg-grid" aria-hidden="true"></div>
+  <div class="auth-bg-glow" aria-hidden="true"></div>
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="auth-logomark">
+        <svg viewBox="0 0 28 28" fill="none"><path d="M14 3L25 8.5V19.5L14 25L3 19.5V8.5L14 3Z" stroke="#d4a843" stroke-width="1.5" fill="rgba(212,168,67,0.1)"/><path d="M14 9v10M10 12h8M10 16h6" stroke="#d4a843" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <h1>Fin<span>flow</span></h1>
+      <p>Your personal finance command centre</p>
+    </div>
+    <div id="loginError" class="auth-err" role="alert"></div>
+    <form id="loginForm" novalidate>
+      <div class="form-group">
+        <label class="form-label" for="loginEmail">Email address</label>
+        <div class="input-wrap">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <input class="form-control" type="email" id="loginEmail" placeholder="arjun@example.com" autocomplete="email" required/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="loginPassword">Password</label>
+        <div class="input-wrap">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <input class="form-control" type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" required/>
+        </div>
+      </div>
+      <button type="submit" id="loginBtn" class="btn btn-primary btn-lg btn-full">Sign In</button>
+    </form>
+    <div class="auth-divider">or continue with</div>
+    <button class="btn-google" type="button" onclick="API.auth.googleUrl()">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Sign in with Google
+    </button>
+    <p class="auth-footer">New to Finflow? <a id="showRegisterLink">Create an account →</a></p>
+  </div>
+</section>
+
+<!-- ════════════ REGISTER ════════════ -->
+<section id="registerScreen" class="auth-screen" aria-label="Create account" style="display:none">
+  <div class="auth-bg-grid" aria-hidden="true"></div>
+  <div class="auth-bg-glow" aria-hidden="true"></div>
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="auth-logomark">
+        <svg viewBox="0 0 28 28" fill="none"><path d="M14 3L25 8.5V19.5L14 25L3 19.5V8.5L14 3Z" stroke="#d4a843" stroke-width="1.5" fill="rgba(212,168,67,0.1)"/><path d="M14 9v10M10 12h8M10 16h6" stroke="#d4a843" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <h1>Create <span>Account</span></h1>
+      <p>Start tracking your financial health</p>
+    </div>
+    <div id="registerError" class="auth-err" role="alert"></div>
+    <form id="registerForm" novalidate>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="regFirstName">First name</label>
+          <input class="form-control" type="text" id="regFirstName" placeholder="Arjun" autocomplete="given-name" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="regLastName">Last name</label>
+          <input class="form-control" type="text" id="regLastName" placeholder="Sharma" autocomplete="family-name" required/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="regEmail">Email address</label>
+        <input class="form-control" type="email" id="regEmail" placeholder="arjun@example.com" autocomplete="email" required/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="regPassword">Password <span style="color:var(--text-3);text-transform:none;font-weight:400;letter-spacing:0">(min. 8 characters)</span></label>
+        <input class="form-control" type="password" id="regPassword" placeholder="••••••••" autocomplete="new-password" required/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="regCurrency">Preferred currency</label>
+        <select class="form-control" id="regCurrency">
+          <option value="INR">🇮🇳 INR — Indian Rupee</option>
+          <option value="USD">🇺🇸 USD — US Dollar</option>
+          <option value="EUR">🇪🇺 EUR — Euro</option>
+          <option value="GBP">🇬🇧 GBP — British Pound</option>
+          <option value="AED">🇦🇪 AED — UAE Dirham</option>
+          <option value="SGD">🇸🇬 SGD — Singapore Dollar</option>
+        </select>
+      </div>
+      <button type="submit" id="registerBtn" class="btn btn-primary btn-lg btn-full">Create Account</button>
+    </form>
+    <div class="auth-divider">or continue with</div>
+    <button class="btn-google" type="button" onclick="API.auth.googleUrl()">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Sign up with Google
+    </button>
+    <p class="auth-footer">Already have an account? <a id="showLoginLink">Sign in →</a></p>
+  </div>
+</section>
+
+<!-- ════════════ APP ════════════ -->
+<div id="app" class="app" role="application">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" role="navigation" aria-label="Main navigation">
+    <div class="sidebar-logo">
+      <div class="sidebar-logomark">
+        <svg viewBox="0 0 28 28" fill="none"><path d="M14 3L25 8.5V19.5L14 25L3 19.5V8.5L14 3Z" stroke="#d4a843" stroke-width="1.5" fill="rgba(212,168,67,0.1)"/><path d="M14 9v10M10 12h8M10 16h6" stroke="#d4a843" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <span class="sidebar-brand">Fin<span>flow</span></span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-group-label">Overview</div>
+      <div class="nav-item" data-page="dashboard" onclick="Nav.go('dashboard')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        Dashboard
+      </div>
+      <div class="nav-group-label">Finance</div>
+      <div class="nav-item" data-page="transactions" onclick="Nav.go('transactions')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+        Transactions
+      </div>
+      <div class="nav-item" data-page="budgets" onclick="Nav.go('budgets')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        Budgets
+      </div>
+      <div class="nav-item" data-page="reports" onclick="Nav.go('reports')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Reports
+      </div>
+      <div class="nav-group-label">Account</div>
+      <div class="nav-item" data-page="profile" onclick="Nav.go('profile')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Profile &amp; Settings
+      </div>
+      <div class="nav-group-label">AI &amp; Tools</div>
+      <div class="nav-item" data-page="ai" onclick="Nav.go('ai')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z"/></svg>
+        AI Assistant
+      </div>
+      <div class="nav-item" data-page="import" onclick="Nav.go('import')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Import Statement
+      </div>
+      <div class="nav-item" data-page="anomalies" onclick="Nav.go('anomalies')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Anomaly Detection
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-card" onclick="Nav.go('profile')" role="button" tabindex="0">
+        <div class="user-avatar" id="sidebarAvatar">AS</div>
+        <div class="user-info">
+          <div class="user-name"  id="sidebarUserName">Arjun Sharma</div>
+          <div class="user-email" id="sidebarUserEmail">arjun@finflow.app</div>
+        </div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-4);flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <div class="topbar-title"    id="topbarTitle">Dashboard</div>
+        <div class="topbar-subtitle" id="topbarSubtitle">Your financial overview</div>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-icon-btn" id="notifBell" title="Notifications">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <div class="notif-dot"></div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="TxPage.openAdd()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Transaction
+        </button>
+        <button class="btn btn-secondary btn-sm" id="logoutBtn">Sign Out</button>
+      </div>
+    </header>
+
+    <div class="page-wrap">
+
+      <!-- DASHBOARD -->
+      <div id="page-dashboard" class="page">
+        <div class="stats-grid">
+          <div class="stat-card s-income">
+            <div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+            <div class="stat-label">Total Income</div>
+            <div class="stat-value" id="statIncome">₹0.00</div>
+            <div class="stat-change">↑ this month</div>
+          </div>
+          <div class="stat-card s-expense">
+            <div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg></div>
+            <div class="stat-label">Total Expenses</div>
+            <div class="stat-value" id="statExpense">₹0.00</div>
+            <div class="stat-change">↓ this month</div>
+          </div>
+          <div class="stat-card s-savings">
+            <div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+            <div class="stat-label">Net Savings</div>
+            <div class="stat-value" id="statSavings">₹0.00</div>
+            <div class="stat-change">Income − Expenses</div>
+          </div>
+          <div class="stat-card s-budget">
+            <div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
+            <div class="stat-label">Budget Used</div>
+            <div class="stat-value" id="statBudgetPct">—</div>
+            <div class="stat-change">Across all categories</div>
+          </div>
+        </div>
+        <div class="charts-row charts-2" style="margin-bottom:20px">
+          <div class="card">
+            <div class="card-header"><div><div class="card-title">Income vs Expenses</div><div class="card-subtitle">Last 6 months</div></div></div>
+            <div class="card-body"><div class="chart-wrap" style="height:230px"><canvas id="chartIncomeExpense"></canvas></div></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div><div class="card-title">Expense Breakdown</div><div class="card-subtitle">By category</div></div></div>
+            <div class="card-body"><div class="chart-wrap" style="height:230px"><canvas id="chartCategory"></canvas></div></div>
+          </div>
+        </div>
+        <div class="charts-row charts-eq">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Recent Transactions</div><button class="btn btn-ghost btn-sm" onclick="Nav.go('transactions')">View all →</button></div>
+            <div class="card-body" id="recentTxList" style="max-height:340px;overflow-y:auto;padding-top:4px"></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Budget Progress</div><button class="btn btn-ghost btn-sm" onclick="Nav.go('budgets')">Manage →</button></div>
+            <div class="card-body" id="dashBudgetList" style="max-height:340px;overflow-y:auto"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRANSACTIONS -->
+      <div id="page-transactions" class="page">
+        <div class="page-header page-header-row">
+          <div><h2>Transactions</h2><p>Manage all income, expenses &amp; investments</p></div>
+          <button class="btn btn-primary btn-sm" onclick="TxPage.openAdd()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Transaction
+          </button>
+        </div>
+        <div class="toolbar">
+          <div class="search-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input class="search-input" type="search" id="txSearch" placeholder="Search description or category…"/>
+          </div>
+          <div class="filter-tabs">
+            <div class="filter-tab active" onclick="TxPage.setFilter('all',this)">All</div>
+            <div class="filter-tab" onclick="TxPage.setFilter('income',this)">Income</div>
+            <div class="filter-tab" onclick="TxPage.setFilter('expense',this)">Expense</div>
+            <div class="filter-tab" onclick="TxPage.setFilter('investment',this)">Investment</div>
+          </div>
+          <select class="select-sm" id="txCurrencyFilter">
+            <option value="">All Currencies</option>
+            <option value="INR">₹ INR</option>
+            <option value="USD">$ USD</option>
+            <option value="EUR">€ EUR</option>
+            <option value="GBP">£ GBP</option>
+          </select>
+        </div>
+        <div class="data-table">
+          <table>
+            <thead><tr>
+              <th>Transaction</th><th>Type</th><th>Category</th>
+              <th>Currency</th><th>Amount</th><th>Receipt</th><th style="text-align:right">Actions</th>
+            </tr></thead>
+            <tbody id="txTableBody"></tbody>
+          </table>
+          <div class="pagination">
+            <div class="pagination-info" id="paginationInfo"></div>
+            <div class="pagination-btns" id="paginationBtns"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BUDGETS -->
+      <div id="page-budgets" class="page">
+        <div class="page-header page-header-row">
+          <div><h2>Budget Goals</h2><p>Set spending limits and track your progress</p></div>
+          <button class="btn btn-primary btn-sm" onclick="BudgetPage.openAdd()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Set Budget
+          </button>
+        </div>
+        <div class="budget-grid" id="budgetGrid"></div>
+        <div class="card">
+          <div class="card-header"><div><div class="card-title">Budget vs Actual Spend</div><div class="card-subtitle">Current month</div></div></div>
+          <div class="card-body"><div class="chart-wrap" style="height:280px"><canvas id="chartBudget"></canvas></div></div>
+        </div>
+      </div>
+
+      <!-- REPORTS -->
+      <div id="page-reports" class="page">
+        <div class="page-header page-header-row">
+          <div><h2>Reports</h2><p>Analyse your financial trends and insights</p></div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <div class="report-tab-bar">
+              <div class="report-tab active" onclick="ReportsPage.setTab('monthly',this)">Monthly</div>
+              <div class="report-tab" onclick="ReportsPage.setTab('category',this)">By Category</div>
+              <div class="report-tab" onclick="ReportsPage.setTab('networth',this)">Net Worth</div>
+            </div>
+            <select class="select-sm" id="reportYear">
+              <option>2025</option><option selected>2024</option><option>2023</option>
+            </select>
+            <select class="select-sm" id="reportCurrency">
+              <option value="INR">₹ INR</option>
+              <option value="USD">$ USD</option>
+              <option value="EUR">€ EUR</option>
+              <option value="GBP">£ GBP</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px" id="reportContent"></div>
+      </div>
+
+      <!-- PROFILE -->
+      <div id="page-profile" class="page">
+        <div class="page-header"><h2>Profile &amp; Settings</h2><p>Manage your account, preferences and notifications</p></div>
+        <div class="profile-layout">
+          <div>
+            <div class="profile-hero">
+              <div class="profile-avatar-lg" id="profileAvatarLg">AS</div>
+              <div class="profile-display-name"  id="profileDisplayName">Arjun Sharma</div>
+              <div class="profile-display-email" id="profileDisplayEmail">arjun@finflow.app</div>
+              <div class="profile-tag">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                Verified Account
+              </div>
+              <div class="profile-stats-grid">
+                <div class="profile-stat-item"><div class="profile-stat-val" id="profileTxCount">0</div><div class="profile-stat-lbl">Transactions</div></div>
+                <div class="profile-stat-item"><div class="profile-stat-val" id="profileBudgetCount">0</div><div class="profile-stat-lbl">Budgets</div></div>
+                <div class="profile-stat-item" style="grid-column:1/-1"><div class="profile-stat-val" id="profileNetWorth">₹0</div><div class="profile-stat-lbl">Net Worth</div></div>
+              </div>
+              <div style="margin-top:16px;font-size:12px;color:var(--text-3)">Member since <span id="profileJoined">—</span></div>
+            </div>
+          </div>
+          <div class="profile-main">
+            <div class="settings-section">
+              <div class="settings-header"><div class="settings-title">Personal Information</div></div>
+              <div class="settings-body">
+                <div class="form-row">
+                  <div class="form-group"><label class="form-label" for="pfFirstName">First name</label><input class="form-control" type="text" id="pfFirstName" autocomplete="given-name"/></div>
+                  <div class="form-group"><label class="form-label" for="pfLastName">Last name</label><input class="form-control" type="text" id="pfLastName" autocomplete="family-name"/></div>
+                </div>
+                <div class="form-group"><label class="form-label" for="pfEmail">Email address</label><input class="form-control" type="email" id="pfEmail" autocomplete="email"/></div>
+                <button class="btn btn-primary btn-sm" onclick="ProfilePage.savePersonal()">Save Changes</button>
+              </div>
+            </div>
+            <div class="settings-section">
+              <div class="settings-header"><div class="settings-title">Preferences</div></div>
+              <div class="settings-body">
+                <div class="form-group">
+                  <label class="form-label" for="pfCurrency">Preferred currency</label>
+                  <select class="form-control" id="pfCurrency">
+                    <option value="INR">🇮🇳 INR — Indian Rupee</option>
+                    <option value="USD">🇺🇸 USD — US Dollar</option>
+                    <option value="EUR">🇪🇺 EUR — Euro</option>
+                    <option value="GBP">🇬🇧 GBP — British Pound</option>
+                    <option value="AED">🇦🇪 AED — UAE Dirham</option>
+                    <option value="SGD">🇸🇬 SGD — Singapore Dollar</option>
+                  </select>
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="ProfilePage.savePreferences()">Save Preferences</button>
+              </div>
+            </div>
+            <div class="settings-section">
+              <div class="settings-header"><div class="settings-title">Email Notifications</div></div>
+              <div class="settings-body">
+                <div class="notif-row"><div><div class="notif-label">Budget overrun alerts</div><div class="notif-desc">Email when you exceed a budget limit</div></div><label class="toggle-wrap"><input class="toggle-input" type="checkbox" id="notifBudgetOverrun" checked/><span class="toggle-track"></span></label></div>
+                <div class="notif-row"><div><div class="notif-label">80% budget warnings</div><div class="notif-desc">Alert before hitting the limit</div></div><label class="toggle-wrap"><input class="toggle-input" type="checkbox" id="notifBudgetWarning" checked/><span class="toggle-track"></span></label></div>
+                <div class="notif-row"><div><div class="notif-label">Monthly summary</div><div class="notif-desc">Digest email on 1st of every month</div></div><label class="toggle-wrap"><input class="toggle-input" type="checkbox" id="notifMonthlySummary"/><span class="toggle-track"></span></label></div>
+                <button class="btn btn-primary btn-sm" style="margin-top:20px" onclick="ProfilePage.savePreferences()">Save Notification Settings</button>
+              </div>
+            </div>
+            <div class="settings-section">
+              <div class="settings-header"><div class="settings-title" style="color:var(--red)">Danger Zone</div></div>
+              <div class="settings-body">
+                <p style="font-size:13.5px;color:var(--text-3);margin-bottom:16px">These actions are permanent and cannot be undone.</p>
+                <button class="btn btn-danger btn-sm" onclick="Toast.show('Account deletion requires email confirmation. A link has been sent.','warning')">Delete Account</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ AI ASSISTANT PAGE ══ -->
+      <div id="page-ai" class="page">
+        <div class="page-header page-header-row">
+          <div>
+            <h2>AI Assistant</h2>
+            <p>Ask anything about your finances — powered by GPT-4o</p>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button class="btn btn-secondary btn-sm" onclick="AiPage.getInsight()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              Get Monthly Insight
+            </button>
+            <button class="btn btn-ghost btn-sm" onclick="AiPage.clearChat()">Clear Chat</button>
+          </div>
+        </div>
+
+        <!-- Insight box -->
+        <div id="aiInsightBox" style="display:none;margin-bottom:20px">
+          <div class="card" style="border-color:var(--gold-border);background:linear-gradient(135deg,var(--bg-surface) 0%,rgba(212,168,67,0.05) 100%)">
+            <div class="card-header">
+              <div>
+                <div class="card-title" style="color:var(--gold)">✨ AI Financial Insight</div>
+                <div class="card-subtitle" id="aiInsightDate"></div>
+              </div>
+              <button class="btn btn-ghost btn-sm" onclick="document.getElementById('aiInsightBox').style.display='none'">Dismiss</button>
+            </div>
+            <div class="card-body">
+              <p id="aiInsightText" style="font-size:14px;line-height:1.8;color:var(--text-2)"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat area -->
+        <div style="display:grid;grid-template-columns:1fr 320px;gap:20px;height:calc(100vh - 280px)">
+          <div class="card" style="display:flex;flex-direction:column;overflow:hidden">
+            <!-- Messages -->
+            <div id="aiChatMessages" style="flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:14px">
+              <div class="ai-welcome">
+                <div style="text-align:center;padding:40px 20px">
+                  <div style="font-size:40px;margin-bottom:12px">🤖</div>
+                  <h3 style="font-family:var(--font-d);font-size:20px;color:var(--text-1);margin-bottom:8px">Finflow AI</h3>
+                  <p style="font-size:13.5px;color:var(--text-3);max-width:360px;margin:0 auto">Ask me anything about your spending, savings, and budgets. I have full context of your financial data.</p>
+                </div>
+              </div>
+            </div>
+            <!-- Input -->
+            <div style="padding:16px 20px;border-top:1px solid var(--border-dim)">
+              <div style="display:flex;gap:10px">
+                <input class="form-control" type="text" id="aiChatInput"
+                  placeholder="e.g. How much did I spend on food this month?"
+                  style="flex:1"
+                  onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();AiPage.sendMessage()}"
+                />
+                <button class="btn btn-primary" onclick="AiPage.sendMessage()" id="aiSendBtn">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                  Send
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick prompts -->
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div class="card">
+              <div class="card-header"><div class="card-title">Quick Prompts</div></div>
+              <div class="card-body" style="display:flex;flex-direction:column;gap:8px;padding-top:12px">
+                <button class="ai-prompt-btn" onclick="AiPage.usePrompt(this)">How much did I spend on food this month?</button>
+                <button class="ai-prompt-btn" onclick="AiPage.usePrompt(this)">What is my savings rate this month?</button>
+                <button class="ai-prompt-btn" onclick="AiPage.usePrompt(this)">Which category am I overspending on?</button>
+                <button class="ai-prompt-btn" onclick="AiPage.usePrompt(this)">How can I improve my budget?</button>
+                <button class="ai-prompt-btn" onclick="AiPage.usePrompt(this)">Compare my income and expenses this month</button>
+                <button class="ai-prompt-btn" onclick="AiPage.usePrompt(this)">What should I invest in given my savings?</button>
+                <button class="ai-prompt-btn" onclick="AiPage.usePrompt(this)">Am I on track to meet my financial goals?</button>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header"><div class="card-title">About AI Assistant</div></div>
+              <div class="card-body" style="padding-top:12px">
+                <p style="font-size:12.5px;color:var(--text-3);line-height:1.7">Powered by OpenAI GPT-4o-mini. Has access to your current month's financial summary including income, expenses, and budget overruns.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ IMPORT STATEMENT PAGE ══ -->
+      <div id="page-import" class="page">
+        <div class="page-header page-header-row">
+          <div>
+            <h2>Import Bank Statement</h2>
+            <p>Upload CSV or PDF bank statements — transactions are auto-categorised</p>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px">
+          <!-- Upload card -->
+          <div class="card">
+            <div class="card-header"><div class="card-title">Upload Statement</div></div>
+            <div class="card-body">
+              <div class="upload-zone" id="importDropZone"
+                onclick="document.getElementById('importFileInput').click()"
+                ondragover="this.classList.add('dragover');event.preventDefault()"
+                ondragleave="this.classList.remove('dragover')"
+                ondrop="ImportPage.handleDrop(event)">
+                <div class="upload-icon">🏦</div>
+                <div class="upload-text"><strong>Click to upload</strong> or drag and drop</div>
+                <div class="upload-text" style="font-size:12px;margin-top:4px">CSV or PDF — max 10 MB</div>
+                <div id="importFileName" style="margin-top:10px;font-size:13px;color:var(--gold);display:none"></div>
+              </div>
+              <input type="file" id="importFileInput" accept=".csv,.pdf" style="display:none"
+                onchange="ImportPage.handleFile(this.files[0])"/>
+
+              <div style="margin-top:16px;padding:14px;background:var(--bg-elevated);border-radius:var(--r-sm);border:1px solid var(--border-dim)">
+                <div style="font-size:12px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Supported Formats</div>
+                <div style="font-size:13px;color:var(--text-2);line-height:1.8">
+                  ✓ HDFC Bank CSV export<br/>
+                  ✓ ICICI Bank CSV export<br/>
+                  ✓ SBI PDF statement<br/>
+                  ✓ Any CSV with Date, Description, Debit/Credit columns<br/>
+                  ✓ Generic PDF bank statements
+                </div>
+              </div>
+
+              <div style="margin-top:14px">
+                <div style="font-size:12px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Features</div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-2)">
+                    <span style="color:var(--green)">✓</span> Auto-categorisation using AI
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-2)">
+                    <span style="color:var(--green)">✓</span> Duplicate transaction detection
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-2)">
+                    <span style="color:var(--green)">✓</span> Supports multiple currencies
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-2)">
+                    <span style="color:var(--green)">✓</span> Processes in background
+                  </div>
+                </div>
+              </div>
+
+              <button class="btn btn-primary btn-full" style="margin-top:18px" id="importUploadBtn"
+                onclick="ImportPage.upload()" disabled>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Upload &amp; Import
+              </button>
+            </div>
+          </div>
+
+          <!-- Active import status -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Active Import</div>
+              <button class="btn btn-ghost btn-sm" onclick="ImportPage.refreshStatus()">↻ Refresh</button>
+            </div>
+            <div class="card-body" id="importStatusBox">
+              <div class="empty-state" style="padding:40px 20px">
+                <div class="empty-state-icon">📂</div>
+                <h3>No active import</h3>
+                <p>Upload a bank statement to get started</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Import history -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Import History</div>
+            <button class="btn btn-ghost btn-sm" onclick="ImportPage.loadHistory()">↻ Refresh</button>
+          </div>
+          <div class="card-body" style="padding-top:8px">
+            <div id="importHistoryList">
+              <div style="text-align:center;padding:24px;color:var(--text-3);font-size:13.5px">Loading…</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ ANOMALY DETECTION PAGE ══ -->
+      <div id="page-anomalies" class="page">
+        <div class="page-header page-header-row">
+          <div>
+            <h2>Anomaly Detection</h2>
+            <p>AI-powered identification of unusual spending patterns</p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="AnomalyPage.runDetection()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Run Detection
+          </button>
+        </div>
+
+        <!-- Stats row -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px">
+          <div class="stat-card s-expense">
+            <div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+            <div class="stat-label">High Severity</div>
+            <div class="stat-value" id="anomalyCountHigh" style="color:var(--red)">0</div>
+            <div class="stat-change">Needs attention</div>
+          </div>
+          <div class="stat-card s-budget">
+            <div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+            <div class="stat-label">Medium Severity</div>
+            <div class="stat-value" id="anomalyCountMed" style="color:var(--amber)">0</div>
+            <div class="stat-change">Worth reviewing</div>
+          </div>
+          <div class="stat-card s-savings">
+            <div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+            <div class="stat-label">Total Detected</div>
+            <div class="stat-value" id="anomalyCountTotal" style="color:var(--gold)">0</div>
+            <div class="stat-change">This detection run</div>
+          </div>
+        </div>
+
+        <!-- Anomaly list -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Detected Anomalies</div>
+            <div style="font-size:12px;color:var(--text-3)">Click "Dismiss" on resolved items</div>
+          </div>
+          <div class="card-body" id="anomalyList" style="padding-top:8px">
+            <div class="empty-state" style="padding:48px 20px">
+              <div class="empty-state-icon">🔍</div>
+              <h3>No anomalies detected</h3>
+              <p>Click "Run Detection" to analyse your spending patterns using statistical models.</p>
+              <button class="btn btn-primary btn-sm" onclick="AnomalyPage.runDetection()">Run Detection Now</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- How it works -->
+        <div class="card" style="margin-top:20px">
+          <div class="card-header"><div class="card-title">How Anomaly Detection Works</div></div>
+          <div class="card-body">
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
+              <div style="padding:16px;background:var(--bg-elevated);border-radius:var(--r-md);border:1px solid var(--border-dim)">
+                <div style="font-size:24px;margin-bottom:10px">📊</div>
+                <div style="font-size:13.5px;font-weight:600;color:var(--text-1);margin-bottom:6px">Z-Score Analysis</div>
+                <div style="font-size:13px;color:var(--text-3);line-height:1.7">Compares each transaction to your historical average for that category. Flags transactions more than 2 standard deviations from the norm.</div>
+              </div>
+              <div style="padding:16px;background:var(--bg-elevated);border-radius:var(--r-md);border:1px solid var(--border-dim)">
+                <div style="font-size:24px;margin-bottom:10px">📅</div>
+                <div style="font-size:13.5px;font-weight:600;color:var(--text-1);margin-bottom:6px">Frequency Analysis</div>
+                <div style="font-size:13px;color:var(--text-3);line-height:1.7">Detects if you're transacting more often than usual in a category — e.g. 20 food orders this month vs your average of 8.</div>
+              </div>
+              <div style="padding:16px;background:var(--bg-elevated);border-radius:var(--r-md);border:1px solid var(--border-dim)">
+                <div style="font-size:24px;margin-bottom:10px">💸</div>
+                <div style="font-size:13.5px;font-weight:600;color:var(--text-1);margin-bottom:6px">Large Transaction Alert</div>
+                <div style="font-size:13px;color:var(--text-3);line-height:1.7">Flags any single transaction that is more than 3× your average for that category and above ₹5,000.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /page-wrap -->
+  </main>
+</div><!-- /app -->
+
+<!-- TRANSACTION MODAL -->
+<div class="modal-backdrop" id="txModal" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2 class="modal-title" id="txModalTitle">New Transaction</h2>
+      <button class="modal-close-btn" onclick="Modal.close('txModal')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="type-selector">
+      <div class="type-opt sel-expense" data-type="expense" data-selected="true"><div class="type-opt-icon">📉</div><div class="type-opt-label">Expense</div></div>
+      <div class="type-opt" data-type="income"    data-selected="false"><div class="type-opt-icon">📈</div><div class="type-opt-label">Income</div></div>
+      <div class="type-opt" data-type="investment" data-selected="false"><div class="type-opt-icon">💹</div><div class="type-opt-label">Investment</div></div>
+    </div>
+    <div class="form-group"><label class="form-label" for="txDesc">Description *</label><input class="form-control" type="text" id="txDesc" placeholder="e.g. BigBasket Groceries" autocomplete="off"/></div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label" for="txAmount">Amount * <span style="color:var(--text-3);text-transform:none;font-weight:400;letter-spacing:0">(negative = refund)</span></label>
+        <div class="input-wrap"><input class="form-control" type="number" id="txAmount" placeholder="0.00" step="0.01"/><span class="input-suffix" id="txCurrSuffix">INR</span></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="txCurrency">Currency</label>
+        <select class="form-control" id="txCurrency" onchange="document.getElementById('txCurrSuffix').textContent=this.value">
+          <option value="INR">🇮🇳 INR</option><option value="USD">🇺🇸 USD</option>
+          <option value="EUR">🇪🇺 EUR</option><option value="GBP">🇬🇧 GBP</option>
+          <option value="JPY">🇯🇵 JPY</option><option value="AED">🇦🇪 AED</option><option value="SGD">🇸🇬 SGD</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label" for="txCategory">Category</label><select class="form-control" id="txCategory"></select></div>
+      <div class="form-group"><label class="form-label" for="txDate">Date *</label><input class="form-control" type="date" id="txDate"/></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Receipt (optional)</label>
+      <div class="upload-zone" id="uploadZone">
+        <div class="upload-icon">📎</div>
+        <div class="upload-text"><strong>Click to upload</strong> or drag and drop</div>
+        <div id="uploadFileName" class="upload-text" style="margin-top:4px;font-size:12px">JPEG, PNG, PDF — max 5 MB</div>
+      </div>
+      <input type="file" id="receiptInput" accept=".jpg,.jpeg,.png,.pdf" style="display:none"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="Modal.close('txModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="TxPage.save()">Save Transaction</button>
+    </div>
+  </div>
+</div>
+
+<!-- BUDGET MODAL -->
+<div class="modal-backdrop" id="budgetModal" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2 class="modal-title" id="budgetModalTitle">Set Budget Goal</h2>
+      <button class="modal-close-btn" onclick="Modal.close('budgetModal')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="budgetCategory">Expense Category</label>
+      <select class="form-control" id="budgetCategory">
+        <option>Food &amp; Dining</option><option>Transport</option><option>Shopping</option>
+        <option>Entertainment</option><option>Health</option><option>Utilities</option>
+        <option>Rent</option><option>Travel</option><option>Education</option>
+        <option>Subscriptions</option><option>Insurance</option><option>EMI / Loan</option><option>Other Expense</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label" for="budgetAmount">Budget Amount (₹)</label><input class="form-control" type="number" id="budgetAmount" placeholder="e.g. 8000" step="100" min="1"/></div>
+      <div class="form-group"><label class="form-label" for="budgetPeriod">Period</label><select class="form-control" id="budgetPeriod"><option value="monthly">Monthly</option><option value="weekly">Weekly</option></select></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="Modal.close('budgetModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="BudgetPage.save()">Save Budget</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap" aria-live="polite"></div>
+
+<!-- Scripts — load order matters -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/pages.js"></script>
+<script src="/js/ai-pages.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>
