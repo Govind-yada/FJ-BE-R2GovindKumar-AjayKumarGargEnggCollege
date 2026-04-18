@@ -34,12 +34,7 @@ function parseCSV(text) {
   return rows;
 }
 
-/* ── Map raw CSV row to a normalised transaction ── */
 function normaliseRow(row) {
-  // Support common bank CSV formats:
-  // HDFC: Date, Narration, Value Dat, Debit Amount, Credit Amount, Chq/Ref Number, Closing Balance
-  // ICICI: Transaction Date, Value Date, Description, Ref No./Cheque No., Debit, Credit, Balance
-  // Generic: date, description/narration, amount/debit/credit
 
   const dateKey   = Object.keys(row).find(k => k.includes('date') || k === 'date');
   const descKey   = Object.keys(row).find(k => k.includes('narration') || k.includes('description') || k.includes('particulars') || k.includes('details'));

@@ -1,11 +1,5 @@
 'use strict';
 
-/* ══════════════════════════════════════
-   API CLIENT
-   Wraps all fetch calls to /api/*
-   Handles auth headers, token refresh,
-   and consistent error handling.
-══════════════════════════════════════ */
 
 const API = (() => {
   let _accessToken = localStorage.getItem('accessToken') || null;

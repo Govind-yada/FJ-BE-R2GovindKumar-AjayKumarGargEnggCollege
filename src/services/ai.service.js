@@ -24,16 +24,13 @@ async function getHistory(userId, limit = 20) {
      LIMIT $2`,
     [userId, limit]
   );
-  // Return in chronological order
   return res.rows.reverse().map(r => ({ role: r.role, content: r.content }));
 }
 
-/* ── Clear conversation ── */
 async function clearHistory(userId) {
   await query('DELETE FROM ai_conversations WHERE user_id=$1', [userId]);
 }
 
-/* ── Build financial context string for the AI ── */
 async function buildFinancialContext(userId) {
   const now   = new Date();
   const month = now.getMonth() + 1;
@@ -108,7 +105,6 @@ async function getInsight(userId) {
   const savings       = income - expense - investment;
   const savingsRate   = income > 0 ? (savings / income) * 100 : 0;
 
-  // Check budget overruns
   const budgetRes = await query(
     `SELECT b.category_name,
             COALESCE(SUM(t.amount_inr),0) AS spent,

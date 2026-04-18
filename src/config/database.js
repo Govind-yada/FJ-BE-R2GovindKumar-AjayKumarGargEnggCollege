@@ -3,7 +3,6 @@ const { Pool } = require('pg');
 const logger   = require('../utils/logger');
 
 function buildConfig() {
-  // Prefer DATABASE_URL; fall back to individual DB_* env vars
   if (process.env.DATABASE_URL) {
     return {
       connectionString: process.env.DATABASE_URL,

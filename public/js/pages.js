@@ -1,8 +1,5 @@
 'use strict';
 
-/* ══════════════════════════════════════
-   DASHBOARD
-══════════════════════════════════════ */
 const DashboardPage = (() => {
   async function render() {
     try {
@@ -93,9 +90,6 @@ const DashboardPage = (() => {
   return { render };
 })();
 
-/* ══════════════════════════════════════
-   TRANSACTIONS
-══════════════════════════════════════ */
 const TxPage = (() => {
   let _filter = 'all', _search = '', _currency = '', _page = 1, _total = 0, _perPage = 15;
   let _editId = null, _file = null;
@@ -295,9 +289,7 @@ const TxPage = (() => {
   return { render, setFilter, setSearch, setCurrency, openAdd, openEdit, save, confirmDelete, handleFile, _selectType };
 })();
 
-/* ══════════════════════════════════════
-   BUDGETS
-══════════════════════════════════════ */
+
 const BudgetPage = (() => {
   let _editId = null;
 
@@ -426,9 +418,6 @@ const BudgetPage = (() => {
   return { render, openAdd, openEdit, save, confirmDelete };
 })();
 
-/* ══════════════════════════════════════
-   REPORTS
-══════════════════════════════════════ */
 const ReportsPage = (() => {
   let _tab = 'monthly';
   function setTab(tab, el) {
@@ -533,9 +522,6 @@ const ReportsPage = (() => {
   return { render, setTab };
 })();
 
-/* ══════════════════════════════════════
-   PROFILE
-══════════════════════════════════════ */
 const ProfilePage = (() => {
   async function render() {
     const u = AppState.user;
@@ -599,5 +585,4 @@ const ProfilePage = (() => {
   return { render, savePersonal, savePreferences };
 })();
 
-/* ── shared helper ── */
 function _set(id, v) { const e = document.getElementById(id); if(e) e.textContent=v; }

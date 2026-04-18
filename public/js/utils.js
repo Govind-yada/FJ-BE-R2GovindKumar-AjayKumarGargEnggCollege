@@ -164,7 +164,11 @@ function fmtCur(amount, currency = 'INR') {
 /* ── DATE HELPERS ── */
 function fmtDate(d) {
   if (!d) return '—';
-  return new Date(d+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+  
+  const dateOnly = String(d).slice(0, 10);
+  const parsed   = new Date(dateOnly + 'T00:00:00');
+  if (isNaN(parsed.getTime())) return '—';
+  return parsed.toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
 }
 function todayISO() { return new Date().toISOString().split('T')[0]; }
 

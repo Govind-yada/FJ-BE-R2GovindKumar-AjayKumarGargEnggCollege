@@ -22,7 +22,6 @@ async function googleCallback(req, res, next) {
     const { googleId, email, firstName, lastName } = req.googleProfile;
     const result = await authService.googleOAuth({ googleId, email, firstName, lastName });
     res.cookie('refreshToken', result.refreshToken, cookieOpts());
-    // Redirect to frontend with token in query (SPA picks it up)
     res.redirect(`${process.env.CLIENT_URL || '/'}?token=${result.accessToken}`);
   } catch (err) { next(err); }
 }

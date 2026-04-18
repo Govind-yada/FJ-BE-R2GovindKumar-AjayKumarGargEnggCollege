@@ -1,8 +1,5 @@
 'use strict';
 
-/* ══════════════════════════════════════
-   AI ASSISTANT PAGE
-══════════════════════════════════════ */
 const AiPage = (() => {
   let _initialised = false;
 
@@ -151,9 +148,6 @@ const AiPage = (() => {
   return { render, sendMessage, usePrompt, getInsight, clearChat };
 })();
 
-/* ══════════════════════════════════════
-   IMPORT STATEMENT PAGE
-══════════════════════════════════════ */
 const ImportPage = (() => {
   let _selectedFile = null;
   let _activeImportId = null;
@@ -309,9 +303,6 @@ const ImportPage = (() => {
   return { render, handleFile, handleDrop, upload, refreshStatus, loadHistory };
 })();
 
-/* ══════════════════════════════════════
-   ANOMALY DETECTION PAGE
-══════════════════════════════════════ */
 const AnomalyPage = (() => {
 
   async function render() {

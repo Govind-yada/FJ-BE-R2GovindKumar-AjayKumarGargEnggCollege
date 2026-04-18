@@ -40,7 +40,6 @@ async function update(id, userId, fields) {
   return res.rows[0] || null;
 }
 
-// Soft-delete: preserve transactions referencing this category
 async function softDelete(id, userId) {
   const res = await query(
     'UPDATE categories SET deleted_at=NOW() WHERE id=$1 AND user_id=$2 RETURNING id',

@@ -8,15 +8,6 @@ async function getAll(req, res, next) {
   } catch (err) { next(err); }
 }
 
-// async function getAll(req, res, next) {
-//   try {
-//     const result = await txService.getAll(req.user.id, req.query);
-//     res.json(result); // result already has { data, total, page, perPage }
-//   } catch (err) { next(err); }
-// }
-
-
-
 async function getById(req, res, next) {
   try {
     const tx = await txService.getById(req.params.id, req.user.id);

@@ -1,10 +1,6 @@
 'use strict';
 const { AppError } = require('./errorHandler');
 
-/**
- * Middleware factory — validates req.body against a Joi schema.
- * Returns 422 with a human-readable message on failure.
- */
 function validate(schema) {
   return (req, res, next) => {
     const { error, value } = schema.validate(req.body, {

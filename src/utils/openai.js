@@ -4,9 +4,6 @@ const logger = require('./logger');
 
 const BASE_URL = 'https://api.openai.com/v1';
 
-/**
- * Make a raw HTTPS POST to OpenAI — no axios dependency needed.
- */
 function openaiPost(endpoint, body) {
   return new Promise((resolve, reject) => {
     const apiKey = process.env.OPENAI_API_KEY;
@@ -44,12 +41,7 @@ function openaiPost(endpoint, body) {
   });
 }
 
-/**
- * Send messages to GPT-4o-mini and get a text response.
- * @param {Array<{role:string, content:string}>} messages
- * @param {string} systemPrompt
- * @returns {Promise<string>}
- */
+
 async function chat(messages, systemPrompt) {
   const body = {
     model:       process.env.OPENAI_MODEL || 'gpt-4o-mini',
@@ -65,10 +57,7 @@ async function chat(messages, systemPrompt) {
   return res.choices?.[0]?.message?.content?.trim() || '';
 }
 
-/**
- * Auto-categorise a transaction description using OpenAI.
- * Returns { category, type } — both strings.
- */
+
 async function categorise(description, availableCategories) {
   const catList = availableCategories.map(c => `${c.name} (${c.type})`).join(', ');
   const systemPrompt = `You are a financial transaction categoriser for Indian users.
@@ -90,9 +79,6 @@ Respond with ONLY valid JSON, no explanation.`;
   }
 }
 
-/**
- * Generate a financial insight summary for the user's current month.
- */
 async function generateInsight(financialData) {
   const systemPrompt = `You are a friendly, concise personal finance advisor for Indian users.
 Analyse the user's financial data and give 3-4 specific, actionable insights.
@@ -111,9 +97,7 @@ Please give me personalised financial insights.`;
   return chat([{ role: 'user', content: userMsg }], systemPrompt);
 }
 
-/**
- * Answer a natural-language finance question from the user.
- */
+
 async function answerQuestion(question, conversationHistory, financialContext) {
   const systemPrompt = `You are Finflow AI, a helpful personal finance assistant for Indian users.
 You have access to the user's financial summary below. Answer questions naturally and helpfully.
@@ -123,7 +107,7 @@ User's Financial Context:
 ${financialContext}`;
 
   const messages = [
-    ...conversationHistory.slice(-8), // keep last 8 messages for context
+    ...conversationHistory.slice(-8), 
     { role: 'user', content: question },
   ];
 

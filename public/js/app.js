@@ -1,8 +1,5 @@
 'use strict';
 
-/* ══════════════════════════════════════
-   APPLICATION STATE
-══════════════════════════════════════ */
 const AppState = {
   user: null,
   updateChrome() {
@@ -15,9 +12,6 @@ const AppState = {
   },
 };
 
-/* ══════════════════════════════════════
-   AUTH
-══════════════════════════════════════ */
 const Auth = (() => {
   function showScreen(id) {
     ['loginScreen','registerScreen'].forEach(s => {
@@ -136,9 +130,6 @@ const Auth = (() => {
   return { showScreen, login, register, logout, checkOAuthRedirect, tryAutoLogin };
 })();
 
-/* ══════════════════════════════════════
-   BOOTSTRAP
-══════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', async () => {
   Modal.init();
   _bindEvents();
@@ -155,9 +146,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!AppState.user) await Auth.tryAutoLogin();
 });
 
-/* ══════════════════════════════════════
-   EVENT BINDING
-══════════════════════════════════════ */
 function _bindEvents() {
   // Auth screen toggles
   document.getElementById('showRegisterLink')?.addEventListener('click', () => Auth.showScreen('registerScreen'));

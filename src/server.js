@@ -21,10 +21,8 @@ const categoryRoutes    = require('./routes/category.routes');
 const reportRoutes      = require('./routes/report.routes');
 const aiRoutes          = require('./routes/ai.routes');
 
-
-// ── Auto-run migrations ──
 const fs = require('fs');
-const { query } = require('./config/db');
+const { query } = require('./config/database');
 
 async function runMigrations() {
   try {
@@ -52,7 +50,7 @@ app.set('trust proxy', 1);
 
 /* ── Security ── */
 app.use(helmet({
-  contentSecurityPolicy: false, // allow inline scripts for frontend
+  contentSecurityPolicy: false, 
   crossOriginEmbedderPolicy: false,
 }));
 app.use(cors({
@@ -115,20 +113,6 @@ app.get('*', (_req, res) => {
 app.use(notFound);
 app.use(errorHandler);
 
-/* ── Start server ── */
-// const PORT = process.env.PORT || 5000;
-// if (process.env.NODE_ENV !== 'test') {
-//   app.listen(PORT, () => {
-//     logger.info(`✓ Finflow server running → http://localhost:${PORT}`);
-
-//     // Start background jobs only in non-test mode
-//     require('./jobs/fxRefresh');
-//     require('./jobs/budgetNotify');
-//   });
-// }
-
-
-// REPLACE with this
 const PORT = process.env.PORT || 5000;
 if (process.env.NODE_ENV !== 'test') {
   runMigrations().then(() => {
