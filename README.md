@@ -1,4 +1,4 @@
-# FJ-BE-R2 [Your-Name]-[Your-College]
+# FJ-BE-R2 GovindKumar-AjayKumarGarg
 
 A comprehensive **Personal Finance Tracker** web application built as part of a backend engineering assignment.
 
