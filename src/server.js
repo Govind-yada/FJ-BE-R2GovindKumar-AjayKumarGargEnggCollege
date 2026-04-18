@@ -21,7 +21,34 @@ const categoryRoutes    = require('./routes/category.routes');
 const reportRoutes      = require('./routes/report.routes');
 const aiRoutes          = require('./routes/ai.routes');
 
+
+// ── Auto-run migrations ──
+const fs = require('fs');
+const { query } = require('./config/db');
+
+async function runMigrations() {
+  try {
+    const migrationsPath = path.join(__dirname, '../migrations');
+    const files = fs.readdirSync(migrationsPath).sort();
+    for (const file of files) {
+      if (file.endsWith('.sql')) {
+        try {
+          const sql = fs.readFileSync(path.join(migrationsPath, file), 'utf8');
+          await query(sql);
+          logger.info(`✅ Migration done: ${file}`);
+        } catch (err) {
+          logger.info(`⚠️ Migration skipped: ${file} → ${err.message}`);
+        }
+      }
+    }
+    logger.info('✅ All migrations complete!');
+  } catch (err) {
+    logger.error('Migration runner error:', err.message);
+  }
+}
+
 const app = express();
+app.set('trust proxy', 1);
 
 /* ── Security ── */
 app.use(helmet({
@@ -89,15 +116,29 @@ app.use(notFound);
 app.use(errorHandler);
 
 /* ── Start server ── */
+// const PORT = process.env.PORT || 5000;
+// if (process.env.NODE_ENV !== 'test') {
+//   app.listen(PORT, () => {
+//     logger.info(`✓ Finflow server running → http://localhost:${PORT}`);
+
+//     // Start background jobs only in non-test mode
+//     require('./jobs/fxRefresh');
+//     require('./jobs/budgetNotify');
+//   });
+// }
+
+
+// REPLACE with this
 const PORT = process.env.PORT || 5000;
 if (process.env.NODE_ENV !== 'test') {
-  app.listen(PORT, () => {
-    logger.info(`✓ Finflow server running → http://localhost:${PORT}`);
-
-    // Start background jobs only in non-test mode
-    require('./jobs/fxRefresh');
-    require('./jobs/budgetNotify');
+  runMigrations().then(() => {
+    app.listen(PORT, () => {
+      logger.info(`✓ Finflow server running → http://localhost:${PORT}`);
+      require('./jobs/fxRefresh');
+      require('./jobs/budgetNotify');
+    });
   });
 }
+
 
 module.exports = app;
