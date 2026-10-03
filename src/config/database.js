@@ -2,14 +2,37 @@
 const { Pool } = require('pg');
 const logger   = require('../utils/logger');
 
+function getSSLConfig(connectionString) {
+  if (!connectionString) return false;
+  try {
+    const parsed = new URL(connectionString.replace(/^postgres(ql)?:\/\//, 'http://'));
+    const host = (parsed.hostname || '').toLowerCase();
+    const sslmode = (parsed.searchParams.get('sslmode') || '').toLowerCase();
+
+    if (sslmode === 'disable') return false;
+    if (sslmode === 'require') return { rejectUnauthorized: false };
+
+    // Local / private network addresses
+    if (host === 'localhost' || host === '127.0.0.1' || host === 'postgres') return false;
+
+    // Render internal database hostnames (e.g. "dpg-xxxxxx-a" without domain, or ending in ".internal")
+    // Render docs: Internal database connections do NOT support SSL.
+    if (!host.includes('.') || host.endsWith('.internal')) {
+      return false;
+    }
+
+    // Remote cloud database hosts (Render external, Neon, Supabase, AWS RDS, ElephantSQL, etc.)
+    return { rejectUnauthorized: false };
+  } catch (err) {
+    return connectionString.includes('localhost') ? false : { rejectUnauthorized: false };
+  }
+}
+
 function buildConfig() {
   if (process.env.DATABASE_URL) {
     return {
       connectionString: process.env.DATABASE_URL,
-      // ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-      ssl: process.env.DATABASE_URL
-  ? { rejectUnauthorized: false }
-  : false,
+      ssl: getSSLConfig(process.env.DATABASE_URL),
     };
   }
   return {
@@ -24,9 +47,9 @@ function buildConfig() {
 
 const pool = new Pool({
   ...buildConfig(),
-  max:                  20,
-  idleTimeoutMillis:    30000,
-  connectionTimeoutMillis: 2000,
+  max:                     20,
+  idleTimeoutMillis:       30000,
+  connectionTimeoutMillis: 15000, // 15s to support cloud cold starts
 });
 
 pool.on('connect', () => logger.debug('DB pool: new client connected'));
@@ -49,4 +72,4 @@ async function withTransaction(fn) {
   }
 }
 
-module.exports = { pool, query, withTransaction };
+module.exports = { pool, query, withTransaction, getSSLConfig };

@@ -24,10 +24,13 @@ const aiRoutes          = require('./routes/ai.routes');
 const fs = require('fs');
 const { query } = require('./config/database');
 
+let migrationsCompleted = false;
+
 async function runMigrations() {
   try {
     const migrationsPath = path.join(__dirname, '../migrations');
     const files = fs.readdirSync(migrationsPath).sort();
+    let allSuccess = true;
     for (const file of files) {
       if (file.endsWith('.sql')) {
         try {
@@ -35,11 +38,19 @@ async function runMigrations() {
           await query(sql);
           logger.info(`✅ Migration done: ${file}`);
         } catch (err) {
-          logger.info(`⚠️ Migration skipped: ${file} → ${err.message}`);
+          if (err.message && err.message.includes('already exists')) {
+            logger.info(`ℹ️ Migration skipped (already exists): ${file}`);
+          } else {
+            allSuccess = false;
+            logger.warn(`⚠️ Migration failed: ${file} → ${err.message}`);
+          }
         }
       }
     }
-    logger.info('✅ All migrations complete!');
+    if (allSuccess) {
+      migrationsCompleted = true;
+      logger.info('✅ All migrations complete!');
+    }
   } catch (err) {
     logger.error('Migration runner error:', err.message);
   }
@@ -53,8 +64,12 @@ app.use(helmet({
   contentSecurityPolicy: false, 
   crossOriginEmbedderPolicy: false,
 }));
+
 app.use(cors({
-  origin:      process.env.CLIENT_URL || 'http://localhost:5000',
+  origin: (origin, callback) => {
+    // Reflect origin to support credentials from any web origin / localhost / render
+    callback(null, true);
+  },
   credentials: true,
 }));
 
@@ -72,7 +87,7 @@ if (process.env.NODE_ENV !== 'test') {
 /* ── Rate limiting ── */
 const authLimiter = rateLimit({
   windowMs: 60 * 1000,
-  max: 15,
+  max: 30,
   message: { error: true, message: 'Too many requests. Please wait and try again.' },
   standardHeaders: true,
   legacyHeaders:   false,
@@ -87,6 +102,16 @@ const apiLimiter = rateLimit({
 app.use('/api/auth', authLimiter);
 app.use('/api',      apiLimiter);
 
+// Retry migrations if previous attempt failed on cold-start
+app.use(async (req, _res, next) => {
+  if (!migrationsCompleted && req.path.startsWith('/api') && req.path !== '/api/health') {
+    try {
+      await runMigrations();
+    } catch (_) {}
+  }
+  next();
+});
+
 /* ── Static files (frontend + uploads) ── */
 app.use(express.static(path.join(__dirname, '../public')));
 app.use('/uploads', express.static(path.join(process.cwd(), process.env.UPLOAD_DIR || 'uploads')));
@@ -99,9 +124,42 @@ app.use('/api/categories',   categoryRoutes);
 app.use('/api/reports',      reportRoutes);
 app.use('/api/ai',           aiRoutes);
 
-/* ── Health check ── */
-app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok', env: process.env.NODE_ENV, ts: new Date().toISOString() });
+/* ── Health check with Database status ── */
+app.get('/api/health', async (_req, res) => {
+  let dbStatus = 'disconnected';
+  let dbError = null;
+  let dbHost = null;
+
+  try {
+    if (process.env.DATABASE_URL) {
+      try {
+        const u = new URL(process.env.DATABASE_URL.replace(/^postgres(ql)?:\/\//, 'http://'));
+        dbHost = u.hostname;
+      } catch (_) {
+        dbHost = 'unparseable';
+      }
+    } else {
+      dbHost = process.env.DB_HOST || 'localhost';
+    }
+
+    await query('SELECT 1');
+    dbStatus = 'connected';
+  } catch (err) {
+    dbError = err.message;
+  }
+
+  const isHealthy = dbStatus === 'connected';
+  res.status(isHealthy ? 200 : 503).json({
+    status: isHealthy ? 'ok' : 'degraded',
+    database: {
+      status: dbStatus,
+      host: dbHost,
+      ...(dbError ? { error: dbError } : {}),
+      migrations: migrationsCompleted ? 'completed' : 'pending',
+    },
+    env: process.env.NODE_ENV || 'development',
+    ts: new Date().toISOString(),
+  });
 });
 
 /* ── SPA fallback (serve index.html for all unknown routes) ── */
@@ -123,6 +181,5 @@ if (process.env.NODE_ENV !== 'test') {
     });
   });
 }
-
 
 module.exports = app;
