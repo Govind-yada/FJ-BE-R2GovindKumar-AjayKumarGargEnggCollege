@@ -1,0 +1,26 @@
+databases:
+  - name: finflow-db
+    databaseName: finflow_db
+    user: postgres
+    plan: free
+    region: oregon
+
+services:
+  - type: web
+    name: fj-be-r2govindkumar
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: finflow-db
+          property: connectionString
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: REFRESH_TOKEN_SECRET
+        generateValue: true
